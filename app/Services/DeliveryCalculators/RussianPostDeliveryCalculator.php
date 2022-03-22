@@ -15,6 +15,10 @@ class RussianPostDeliveryCalculator implements DeliveryCalculatorContract
         $this->end_first_tariff = config('params.delivery_tariff.russian_post_end_first');
     }
 
+    /**
+     * @param int $weight
+     * @return int
+     */
     public function calculate(int $weight): int
     {
         if ($weight <= $this->end_first_tariff) {

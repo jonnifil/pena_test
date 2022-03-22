@@ -11,6 +11,10 @@ class DHLDeliveryCalculator implements DeliveryCalculatorContract
         $this->tariff = config('params.delivery_tariff.dhl');//todo: from DB tariff
     }
 
+    /**
+     * @param int $weight
+     * @return int
+     */
     public function calculate(int $weight): int
     {
         return $weight * $this->tariff;
