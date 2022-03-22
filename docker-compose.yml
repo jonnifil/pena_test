@@ -1,0 +1,59 @@
+version: "3.7"
+services:
+  app:
+    build:
+      args:
+        user: www
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    image: laraveldev/php
+    container_name: pena-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+      - ./php/local.ini:/usr/local/etc/php/conf.d/php.ini
+    environment:
+      XDEBUG_CONFIG: "remote_host=192.168.111.1 remote_enable=1"
+      PHP_IDE_CONFIG: "serverName=Docker"
+    networks:
+      - app-network
+
+  db:
+    image: mysql:5.7
+    container_name: pena-db
+    restart: unless-stopped
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_DATABASE: lara-test
+      MYSQL_ROOT_PASSWORD: 13021962
+      MYSQL_PASSWORD: 13021962
+      MYSQL_USER: jonni
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+      - ./mysql/docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/
+    networks:
+      - app-network
+  nginx:
+    image: nginx:alpine
+    container_name: pena-nginx
+    restart: unless-stopped
+    ports:
+      - 8800:80
+    volumes:
+      - ./:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.111.0/28
