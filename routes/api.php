@@ -20,7 +20,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group([
     'namespace' => 'Api',
     'as' => 'api.',
-    'middleware' => ['api.response', 'json.response'],
 ], function () {
-
+    Route::group(['prefix' => 'delivery-tariff'], function () {
+        Route::post('calculate-dhl', 'DeliveryCalculateController@calculateDHL');
+        Route::post('calculate-russian-post', 'DeliveryCalculateController@calculateRussianPost');
+    });
 });
